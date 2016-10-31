@@ -1,0 +1,149 @@
+{#<!DOCTYPE html>#}
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ title }}</title>
+
+    <!-- Bootstrap -->
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/css/douban.css" rel="stylesheet">
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="http://cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="/static/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $.ajaxSetup({
+                data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
+            });
+            $("ul li").mousedown(function (e) {
+                        if (1 == e.which) {
+                            $(e.target).css("color", "rgba(0, 0, 0, 0.19)");
+                            doubanurl = $(e.target).attr("abc");
+                            $('#myiframe').attr('src', doubanurl);
+                            $.get("index", {'doubanurl': doubanurl, 'click': '1'}, function (ret) {
+                                {#                alert(ret);#}
+                            });
+                            $("#clickurl").html(doubanurl);
+                            $("#clickurl").attr('href', doubanurl);
+                        } else if (3 == e.which) {
+                            alert("jinbulai?");
+                            doubanurl = $(e.target).attr("abc");
+                            var flag = window.clipboardData.setData("text", doubanurl);
+                            if (flag == true) {
+                                alert("复制成功。现在您可以粘贴（Ctrl+v）到Blog或BBS中了。");
+                            } else {
+                                alert("复制失败。");
+                            }
+                        }
+                    }
+            );
+            $("#button_Count").click(function (e) {
+                $(e.target).text("正在加载...");
+                count = $("#input_count").val();
+                {#                $.get("index",{'count':count},function (ret) {#}
+                {##}
+                {#                })#}
+                location.href = "?count=" + count;
+            });
+            $("#button_copy").click(function (e) {
+                var flag = window.clipboardData.setData("text", "aaa");
+                if (flag == true) {
+                    alert("复制成功。现在您可以粘贴（Ctrl+v）到Blog或BBS中了。");
+                } else {
+                    alert("复制失败。");
+                }
+            });
+        })
+    </script>
+</head>
+<body>
+
+<div id="content-left" style="overflow:auto">
+    <div id="container" class="bg-info" style="padding: 5px;">
+        <input type="text" id="input_count" style="margin: 5px;"/>
+        <button type="button" id="button_Count" style="margin: 5px;">设置页数</button>
+        <button type="button" id="button_copy" style="margin: 5px;visibility: hidden">复制</button>
+        <br/>
+        <a target="_blank" id="clickurl" style="margin: 5px;"></a>
+        <br/>
+        <br/>
+        <ul class="list-unstyled">
+            {% for title in topicTitles %}
+                <li
+
+                        {% for url in topicUrls %}
+                            {% if forloop.parentloop.counter == forloop.counter %}
+                                abc="{{ url }}"
+                            {% endif %}
+                        {% endfor %}
+
+                                style="cursor:pointer;font-size: large;{% for isReaded in isReadeds %}
+                                    {% if forloop.counter == forloop.parentloop.counter %}
+                                        {% if isReaded == 1 %}
+                                            color: rgba(0, 0, 0, 0.19);
+                                            display: none;
+                                        {% else %}
+                                            color: #2a6496;
+                                        {% endif %}
+                                    {% endif %}
+                                {% endfor %}
+                                        {% for minPrice in minPrices %}
+                                            {% if forloop.counter == forloop.parentloop.counter %}
+{#                                                {% if minPrice > 1501 or minPrice < 899 %}#}
+                                                {% if minPrice > 1851 or minPrice < 1199 %}
+{#                                                    {% if minPrice != 0 %}#}
+{#                                                        display: none;#}
+                                                        {# 不隐藏#}
+{#                                                    {% endif %}#}
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endfor %}
+                                        ; ">
+                    {% for minPrice in minPrices %}{% if forloop.parentloop.counter == forloop.counter %}
+                        <span class="label label-primary">{{ minPrice }}</span>{% endif %}{% endfor %}{{ title }}
+                </li>
+            {% endfor %}
+
+        </ul>
+    </div>
+</div>
+<div id="content-right">
+    <iframe id="myiframe" src="{{ doubanUrl }}" height="100%" style="width: 70%" scrolling="0" security="restricted"
+            sandbox="allow-scripts allow-forms"/>
+</div>
+<!-- My script -->
+
+
+{#        $('#formadd').submit(function(){#}
+{#                var name = $("#id_name").val();                 //获得form中用户输入的name 注意这里的id_name 与你html中的id一致#}
+{#                var password = $("#id_password").val();    //同上#}
+{##}
+{#                $.ajax({#}
+{#                    type:"POST",#}
+{#                    data: {name:name, password:password},#}
+{#                    url: "{% url 'blog:comments_upload' %}", //后台处理函数的url 这里用的是static url 需要与urls.py中的name一致#}
+{#                    cache: false,#}
+{#                    dataType: "html",#}
+{#                    success: function(result, statues, xml){#}
+{#                        alert(result);                                         //成功时弹出view传回来的结果#}
+{#                    },#}
+{#                    error: function(){#}
+{#                        alert("false");#}
+{#                    }#}
+{#                });#}
+{#                return false;#}
+{#            });#}
+{##}
+{#        });#}
+
+</body>
+</html>

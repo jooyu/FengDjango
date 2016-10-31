@@ -1,0 +1,14 @@
+#Content-Left{
+    height:100%;
+    width:30%;
+    padding:20px;
+    /*margin:20px;!*设置元素跟其他元素的距离为20像素*!*/
+    float:left;/*设置浮动，实现多列效果，div+Css布局中很重要的*/
+
+}
+#Content-Main{
+    height:100%;
+    width:70%;
+    /*margin:20px;!*设置元素跟其他元素的距离为20像素*!*/
+    float:left;/*设置浮动，实现多列效果，div+Css布局中很重要的*/
+}
